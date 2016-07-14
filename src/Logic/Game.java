@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 public class Game {
 	Board board1;
 	boolean isOver = false;
+	BufferedReader br;
 public static void main(String[] args) {
 	Game main = new Game();
 	try {
@@ -20,18 +21,24 @@ private void run() throws IOException{
 	board1 = new Board("AI");
 	board1.showBoard();
 	while(!isOver){
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		br = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println();
-		System.out.println("commands: printPlayer, fire [int x, int y]");
+		System.out.println("commands: printPlayer, fire (ret then enter x, then ret and enter y)");
         String s = br.readLine();
-        if (s.substring(0, 3).equalsIgnoreCase("fire")) {
-			String sCut = s.substring(4,s.length());
-			
+        if (s.equals("fire")) {
+			try {
+				fire();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+       
 	}
 }
-public void fire(int x, int y){
-	board1.fire(x,y);
+public void fire() throws Exception, Exception{
+	int x = Integer.parseInt(br.readLine());
+	int y = Integer.parseInt(br.readLine());
+	board1.shootAt(x, y);
 }
 	
 public void print(){
