@@ -10,6 +10,11 @@ public abstract class Ship extends Tile {
 	boolean horizontal;
 	boolean[] hits = new boolean[length];
 	String shipType;
+	
+	public Ship(int length, String sp) {
+		this.length = length;
+		this.shipType = sp;
+	}
 
 	public String getShipType() {
 		return shipType;
@@ -110,7 +115,7 @@ public abstract class Ship extends Tile {
 
 	@Override
 	public String toString() {
-		return "" + shipType.toCharArray()[0];
+		return "" + shipType.substring(0,1);
 	}
 
 }

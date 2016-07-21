@@ -1,10 +1,18 @@
 package Logic;
 
+import java.util.ArrayList;
+import java.util.Random;
+
+import Tiles.BattleShip;
+import Tiles.Cruiser;
+import Tiles.Destroyer;
 import Tiles.Ship;
+import Tiles.Sub;
 import Tiles.Tile;
 import Tiles.Water;
 
 public class Board {
+	Random rand = new Random();
 	String player;
 	public Tile[][] tile;
 	boolean[][] hit;
@@ -13,6 +21,7 @@ public class Board {
 	int shipsSunk;
 	int size = 10;
 	boolean isGameOver;
+	private ArrayList<Ship> ships = new ArrayList<Ship>();
 
 	public Board(String player) {
 		this.player = player;
@@ -31,12 +40,46 @@ public class Board {
 
 	}
 
+	public void placeShipRandomly() {
+		ships.add(new BattleShip());
+		for (int i = 0; i < 4; i++) {
+			if (i % 2 == 0) {
+				ships.add(new Cruiser());
+			}
+			ships.add(new Sub());
+			if (i < 3) {
+				ships.add(new Destroyer());
+			}
+		}
+		for (Ship s : ships) {
+			boolean placed = false;
+			while (!placed) {
+				try {
+					int x = rand.nextInt(10);
+					int y = rand.nextInt(10);
+					placeShip(x, y, rand.nextBoolean(), s);
+					placed = true;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				// try catch
+			}
+			// while loop
+		}
+		// for each loop
+	}
+
+	public void placeShip(int x, int y, boolean horz, Ship s) {
+		tile = s.placeShip(x, y, horz, this).tile;
+	}
+
 	public void shootAt(int x, int y) {
 		boolean sunk = false;
 		if (isOccupied(x, y)) {
 			Ship s = (Ship) tile[x][y];
 			sunk = s.shootAt(x, y);
 			HitCount += 1;
+			
 		}
 		if (sunk) {
 			shipsSunk += 1;
@@ -70,14 +113,33 @@ public class Board {
 
 	public void showBoard() {
 		System.out.println("AI's board");
+		System.out.println();
+		System.out.print("  ");
+		for (int i = 0; i < 10; i++) {
+		System.out.print(i + " ");	
+		}
 		for (int x = 0; x < tile.length; x++) {
 			System.out.println();
+			System.out.print(x +" ");
 			for (int y = 0; y < tile[x].length; y++) {
-				Tile til = tile[x][y];
 				if (hit[x][y]) {
-					System.out.print("* ");
+					if (tile[x][y] instanceof Ship) {
+						Ship s = (Ship) tile[x][y];
+						if (s.isSunk()) {
+							System.out.print("X ");
+						} else {
+							System.out.print("$ ");
+						}
+					} else {
+						System.out.print("* ");
+					}
 				} else {
-					System.out.print(til.toString() + " ");
+					if (tile[x][y] instanceof Ship) {
+						System.out.print("- ");
+					} else {
+						System.out.print(tile[x][y].toString() + " ");
+					}
+
 				}
 			}
 		}
