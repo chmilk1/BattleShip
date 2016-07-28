@@ -8,12 +8,13 @@ public abstract class Ship extends Tile {
 	int bowRow;
 	int bowCol;
 	boolean horizontal;
-	boolean[] hits = new boolean[length];
+	boolean[] hits;
 	String shipType;
-	
+
 	public Ship(int length, String sp) {
 		this.length = length;
 		this.shipType = sp;
+		hits = new boolean[length];
 	}
 
 	public String getShipType() {
@@ -53,22 +54,28 @@ public abstract class Ship extends Tile {
 	}
 
 	public boolean isSunk() {
+		// Debug Code
+		for (int i = 0; i < hits.length; i++) {
+			System.out.print(hits[i]);
+		}
 		for (boolean part : hits) {
 			if (!part) {
 				return false;
 			}
 		}
+
 		return true;
+
 	}
 
 	public boolean shootAt(int x, int y) {
-		if (horizontal && x == bowRow && y < bowCol + length && y > bowCol - 1) {
+		if (horizontal && x == bowRow && y <= bowCol && y > bowCol - 1) {
 			System.out.println("Hit!");
-			hits[bowCol + length - y] = true;
+			hits[bowCol + length - y - 1] = true;
 			return true;
-		} else if (!horizontal && y == bowCol && x < bowRow + length && x > bowRow - 1) {
+		} else if (!horizontal && x == bowCol && y >= bowRow && y < bowRow - 1) {
 			System.out.println("Hit!");
-			hits[bowCol + length - x] = true;
+			hits[bowRow + length - x - 1] = true;
 			return true;
 		}
 		return false;
@@ -97,25 +104,28 @@ public abstract class Ship extends Tile {
 		return done;
 
 	}
-	public Board placeShip(int x, int y, boolean horz, Board b){
+
+	public Board placeShip(int x, int y, boolean horz, Board b) {
 		if (okToPlaceShipHere(x, y, horz, b)) {
+			bowCol = x;
+			bowRow = y;
 			for (int i = 0; i < length; i++) {
 				if (horz) {
-					b.tile[x+i][y] = this;
+					b.tile[x + i][y] = this;
 				} else {
-					b.tile[x][y+i] = this;
+					b.tile[x][y + i] = this;
 				}
 			}
 		} else {
 			throw new CantPlaceShip("Can't Place Ship here");
 		}
 		return b;
-		
+
 	}
 
 	@Override
 	public String toString() {
-		return "" + shipType.substring(0,1);
+		return "" + shipType.substring(0, 1);
 	}
 
 }

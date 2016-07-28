@@ -18,7 +18,7 @@ public class Board {
 	boolean[][] hit;
 	int ShotFired;
 	int HitCount;
-	int shipsSunk;
+	int gotHit;
 	int size = 10;
 	boolean isGameOver;
 	private ArrayList<Ship> ships = new ArrayList<Ship>();
@@ -74,16 +74,15 @@ public class Board {
 	}
 
 	public void shootAt(int x, int y) {
-		boolean sunk = false;
+		boolean isHit = false;
 		if (isOccupied(x, y)) {
 			Ship s = (Ship) tile[x][y];
-			sunk = s.shootAt(x, y);
-			HitCount += 1;
-			
+			isHit = s.shootAt(x, y);
+
 		}
-		if (sunk) {
-			shipsSunk += 1;
-			if (shipsSunk > 4) {
+		if (isHit) {
+			gotHit += 1;
+			if (gotHit > 4) {
 				isGameOver = true;
 			}
 		}
@@ -104,7 +103,7 @@ public class Board {
 	}
 
 	public int getShipsSunk() {
-		return shipsSunk;
+		return gotHit;
 	}
 
 	public boolean isGameOver() {
@@ -116,11 +115,11 @@ public class Board {
 		System.out.println();
 		System.out.print("  ");
 		for (int i = 0; i < 10; i++) {
-		System.out.print(i + " ");	
+			System.out.print(i + " ");
 		}
 		for (int x = 0; x < tile.length; x++) {
 			System.out.println();
-			System.out.print(x +" ");
+			System.out.print(x + " ");
 			for (int y = 0; y < tile[x].length; y++) {
 				if (hit[x][y]) {
 					if (tile[x][y] instanceof Ship) {
